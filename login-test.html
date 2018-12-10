@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Sample FirebaseUI App</title>
+        <!-- *******************************************************************************************
+* TODO(DEVELOPER): Paste the initialization snippet from:
+* Firebase Console > Overview > Add Firebase to your web app. *
+
+***************************************************************************************** -->
+
+        <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase.js"></script>
+        <script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyDwy1LRuWQzu_pS-4YIH8eVtBbrWERLy7w",
+                authDomain: "my-project-f92de.firebaseapp.com",
+                databaseURL: "https://my-project-f92de.firebaseio.com",
+                projectId: "my-project-f92de",
+                storageBucket: "my-project-f92de.appspot.com",
+                messagingSenderId: "863552139342"
+            };
+            firebase.initializeApp(config);
+        </script>
+        <script src="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.js"></script>
+        <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.css" />
+        <script type="text/javascript">
+            /   / FirebaseUI config.
+            var database = firebase.database();
+            var auth = firebase.auth();
+            var userID;
+            var fontPref;
+
+
+            //Login (on page)
+            $(document).on("click", "#logIn", function() {
+                event.preventDefault();
+                var email = $("#emailInput").val();
+                var pass = $("#passInput").val();
+                var auth = firebase.auth();
+                var promise = auth.signInWithEmailAndPassword(email, pass);
+                promise.catch(e => console.log(e.message));
+            });
+
+            //Signup (on page)
+            $(document).on("click", "#signUp", function() {
+                event.preventDefault();
+                var email = $("#emailInput").val();
+                var pass = $("#passInput").val();
+                var auth = firebase.auth();
+                var promise = auth.createUserWithEmailAndPassword(email, pass);
+                promise.catch(e => console.log(e.message));
+            });
+
+            //Logout(on page)
+            $(document).on("click", "#logOut", function(event) {
+                event.preventDefault();
+                firebase.auth().signOut();
+            });
+
+            //Detects whether or not user has logged in
+            auth.onAuthStateChanged(firebaseUser => {
+                if (firebaseUser) {
+                    $("#logOut").removeClass("hide");
+                    $(".login-submit").addClass("hide")
+                    $("#logIn").addClass("hide");
+                    $("#signUp").addClass("hide");
+                    userID = firebaseUser.uid
+
+                    $(document).on("click", "#kavivanar", function() {
+                        console.log("I work");
+                        fontPref = '"Kavivanar", cursive';
+                        database.ref().child("user/" + userID + "/Font").set({
+                            font: fontPref,
+                        });
+                    })
+
+                    function writeUserData(userId, name, email, imageUrl) {
+
+                    }
+                    // Get a reference to the database service
+                    var database = firebase.database();
+                    // save the user's profile into Firebase so we can list users,
+                    // use them in Security and Firebase Rules, and show profiles
+
+            var ui = new firebaseui.auth.AuthUI(firebase.auth());
+            console.log(ui);
+            // The start method will wait until the DOM is loaded.
+            ui.start('#firebaseui-auth-container', uiConfig);
+            
+            
+
+            // Get a reference to the database service
+            var database = firebase.database();
+            // save the user's profile into Firebase so we can list users,
+            // use them in Security and Firebase Rules, and show profiles
+            function writeUserData(userId, name, email, imageUrl) {
+                firebase.database().ref('users/' + userId).set({
+                    username: name,
+                    email: email
+                    //some more user data
+                });
+            }
+            var anonymousUser = firebase.auth().currentUser;
+            console.log(anonymousUser);
+            //Get the current userID
+            var userId = firebase.auth().currentUser.uid;
+//            Get the user data
+            console.log(userId);
+//            return firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+//            console.log(snapshot);
+//            }); 
+            
+        </script>
+    </head>
+    <body>
+        <!-- The surrounding HTML is left untouched by FirebaseUI.
+Your app may use that space for branding, controls and other customizations.-->
+        <h1>Welcome to My Awesome App</h1>
+        <div id="firebaseui-auth-container"></div>
+        <div id="loader">Loading...</div>
+    </body>
+</html>
